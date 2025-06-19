@@ -191,4 +191,23 @@ class DashboardController extends Controller
             'message' => 'Product added to cart successfully',
         ], 200);
     }
+
+    public function showCart(){
+        $user = auth('sanctum')->user();
+
+        $cart = Cart::where('user_id', $user->id)->with('product')->get();
+
+        if ($cart->isEmpty()) {
+            
+            return response()->json([
+                'status' => false,
+                'message' => 'Your cart is empty',
+            ]);
+        }
+
+        return response()->json([
+            'status' => true,
+            'cart' => $cart,
+        ]);
+    }
 }

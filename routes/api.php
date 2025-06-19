@@ -24,6 +24,7 @@ Route::controller(DashboardController::class)->group(function(){
     Route::get('remove-favorite/{product}', 'removeFav')->middleware('auth:sanctum');
 
     Route::post('add-cart', 'addToCart')->middleware('auth:sanctum');
+    Route::get('show-cart', 'showCart')->middleware('auth:sanctum');
 });
 
 Route::controller(AuthController::class)->group(function(){
