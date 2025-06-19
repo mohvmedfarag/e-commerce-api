@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Models\Cart;
 use App\Models\Favorite;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -158,5 +159,36 @@ class DashboardController extends Controller
                 'status' => false,
                 'message' => 'Something went wrong',
             ], 200);
+    }
+
+    public function addToCart(Request $request){
+        $data = $request->validate([
+            'product_id' => 'required',
+            'quantity' => 'required',
+            'price' => 'required',
+        ]);
+
+        $product = Cart::where('product_id', $data['product_id'])->first();
+
+        if ($product) {
+            return response()->json([
+                'status' => false,
+                'message' => 'You added this product before',
+            ], 409);
+        }
+
+        $user = auth('sanctum')->user();
+
+        Cart::create([
+            'product_id' => $data['product_id'],
+            'quantity' => $data['quantity'],
+            'price' => $data['price'],
+            'user_id' => $user->id,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Product added to cart successfully',
+        ], 200);
     }
 }
